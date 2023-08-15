@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#Ignore dev and pdn profiles with sensitive data
+application-*.properties
