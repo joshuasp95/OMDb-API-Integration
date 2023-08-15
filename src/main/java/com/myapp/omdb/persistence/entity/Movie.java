@@ -27,7 +27,13 @@ public class Movie {
 
     private String image; // Could be null for movies without an image
 
-    @Column(name = "personal_rating")
+    @Column(name = "personal_rating", columnDefinition = "int default 0")
     private Integer personalRating;
 
+    public Movie(String imdbId, String title, String year, String image) {
+        this.imdbId = imdbId;
+        this.title = title;
+        this.year = year;
+        this.image = image;
+    }
 }

@@ -1,4 +1,9 @@
 package com.myapp.omdb.persistence.repository;
 
-public interface MovieRepository {
+import com.myapp.omdb.persistence.entity.Movie;
+import org.springframework.data.repository.ListCrudRepository;
+
+// Basic Crud Operations (Spring Data JPA)
+public interface MovieRepository extends ListCrudRepository<Movie, String> {
+
 }
