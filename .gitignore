@@ -32,5 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-#Ignore dev and pdn profiles with sensitive data
+#Ignore dev and pdn profiles with sensitive data (but not testing conf)
 application-*.properties
+!application-test.properties
+
