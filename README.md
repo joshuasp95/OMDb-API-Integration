@@ -6,7 +6,7 @@ this coding journey and witness the conjuration of magic within your code!
 
 ## Preview
 
-![Imagen proyecto](https://imgur.com/iuGdsK6)
+![Imgur](https://imgur.com/iuGdsK6)
 ## Table of Contents
 
 - [Features](#features)
