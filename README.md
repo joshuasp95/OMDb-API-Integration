@@ -35,7 +35,7 @@ Technologies Used
 1. **Clone the Repository:**
 
    ```sh
-   git clone https://github.com/your-username/omdb-api-integration.git
+   git clone https://github.com/joshuasp95/omdb-api-integration.git
    ```
 
 2. **Navigate to the Project Directory:**
