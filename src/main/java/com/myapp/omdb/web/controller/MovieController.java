@@ -62,6 +62,8 @@ public class MovieController {
 
     @GetMapping("/ratings")
     public String showRatingForm(Model model) {
+        List<Movie> movies = movieService.getAllOrderedByYear();
+        model.addAttribute("movies", movies);
         return "ratings";
     }
 
@@ -69,8 +71,18 @@ public class MovieController {
     @PostMapping("/ratings")
     public String submitRatingForm(@RequestParam String id,
                                    @RequestParam Integer personalRating) {
+
+
+        //Verify personal rating values are betweeen 1-5
+        if (!validatePersonalRatingValues(personalRating)) {
+            return "error";
+        }
         movieService.updatePersonalRating(id, personalRating);
         return "redirect:/movies";
+    }
+
+    private boolean validatePersonalRatingValues(Integer personalRating) {
+        return (personalRating >= 1 && personalRating <= 5) ? true : false;
     }
 
 }

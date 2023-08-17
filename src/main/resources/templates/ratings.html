@@ -14,37 +14,38 @@
             font-family: Arial, sans-serif;
         }
 
-        .main-box {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 85vh;
+        .main-box{
+            margin: 2em;
         }
 
+     .movie-card {
+            position: relative;
+        }
+
+        .rating-input {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+        }
     </style>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div class="main-box">
-    <div class="container mb-3">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center">Add Rating</h2>
-                    </div>
+    <div class="container d-flex justify-content-center">
+        <div class="row">
+            <div th:each="movie : ${movies}" class="col-md-4 mb-4">
+                <div class="card movie-card">
+                    <img th:src="${movie.image}" class="card-img-top" alt="Movie Image">
                     <div class="card-body">
+                        <h5 class="card-title" th:text="${movie.title}"></h5>
                         <form th:action="@{/ratings}" method="post">
-                            <div class="form-group">
-                                <label for="id">Movie ID:</label>
-                                <input type="text" class="form-control" name="id" id="id" required/>
-                            </div>
-                            <div class="form-group">
-                                <label for="personalRating">Personal Rating:</label>
-                                <input type="number" class="form-control" name="personalRating" id="personalRating"
-                                       min="1" max="5" required/>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit Rating</button>
+                            <!-- This input will not be displaued, only the id will go through *-->
+                            <input type="hidden" name="id" th:value="${movie.imdbId}">
+                            <input type="number" class="form-control" name="personalRating" min="1" max="5" required>
+                            <button type="submit" class="btn btn-primary mt-2">Add Rating</button>
                         </form>
                     </div>
                 </div>

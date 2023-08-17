@@ -7,28 +7,15 @@ this coding journey and witness the conjuration of magic within your code!
 ## Preview
 
 ![PROJECT IMAGE CRUD PREVIEW](https://i.imgur.com/iuGdsK6.png)
+
 ## Table of Contents
 
-- [Features](#features)
 - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [Work in Progress](#work-in-progress)
-
-## Features
-
-- **Data Acquisition:** Delve into the realm of cinematic data as the project effortlessly acquires enchanting details
-  about the beloved Harry Potter series from the OMDB API.
-- **Database Inclusion:** Witness the awe-inspiring integration as the project meticulously stores movie information,
-  encompassing IMDB ID, Title, Year, Image, and Personal Rating, within your local database.
-- **API Endpoints:** Experience the orchestration of RESTful endpoints that facilitate the seamless access and
-  filtration of stored movie data, thereby fostering an intuitive user experience.
-- **Testing the Enchantment:** Engage in the Test-Driven Development (TDD) methodology, weaving unit tests into your
-  spellbinding codebase to ensure its reliability and resilience.
-- **Structured Crafting:** Navigate through an organized project structure that adheres to industry best practices,
-  mirroring the careful assembly of ingredients in an alchemical potion.
 
 ## Getting Started
 
@@ -79,8 +66,7 @@ Technologies Used
 Embark on a collaborative journey by contributing your own enchantments to this project! Take the opportunity to fork
 the repository, introduce your captivating features, and initiate a pull request.
 
+## Future Enhancements
 
-## Work in Progress
-
-🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠️🛠
+- Integrate user authentication for personalized movie ratings.
 

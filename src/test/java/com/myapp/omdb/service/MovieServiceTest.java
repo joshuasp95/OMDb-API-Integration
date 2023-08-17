@@ -198,6 +198,7 @@ class MovieServiceTest {
 
         List<Movie> result = movieService.searchByPersonalRating(mockPersonalRating);
 
+        // all movies should have a 0 value for personal rating
         assertEquals(10, result.size());
         assertEquals(mockMovies.get(1).getYear(), result.get(1).getYear());
     }

@@ -78,6 +78,7 @@ class MovieRepositoryTest {
     @Test
     public void should_return_movies_by_year() {
         String mockYear = "2002";
+
         List<Movie> movies = movieRepository.findByYear(mockYear);
 
         Movie mockMovie = new Movie("tt0295297", "Harry Potter and the Chamber of Secrets", "2002", "https://m.media-amazon.com/images/M/MV5BMjE0YjUzNDUtMjc5OS00MTU3LTgxMmUtODhkOThkMzdjNWI4XkEyXkFqcGdeQXVyMTA3MzQ4MTc0._V1_SX300.jpg");
@@ -90,10 +91,12 @@ class MovieRepositoryTest {
     @Test
     public void should_return_movies_by_personal_rating() {
         int mockPersonalRating = 0;
+
         List<Movie> movies = movieRepository.findByPersonalRating(mockPersonalRating);
 
         Movie mockMovie = new Movie("tt0295297", "Harry Potter and the Chamber of Secrets", "2002", "https://m.media-amazon.com/images/M/MV5BMjE0YjUzNDUtMjc5OS00MTU3LTgxMmUtODhkOThkMzdjNWI4XkEyXkFqcGdeQXVyMTA3MzQ4MTc0._V1_SX300.jpg");
 
+        // all movies have a default value of 0
         assertEquals(4, movies.size());
 
     }
@@ -111,12 +114,14 @@ class MovieRepositoryTest {
 
         movieRepository.updatePersonalRating("id1", 2);
 
+        // optional needed to avoid null errors
         Optional<Movie> updatedMovieOptional = movieRepository.findById("id1");
 
         assertTrue(updatedMovieOptional.isPresent());
 
         Movie updatedMovie = updatedMovieOptional.get();
 
+        // verify that personal rating value has been updated on h2 mem test db
         assertEquals(2, updatedMovie.getPersonalRating());
 
     }
