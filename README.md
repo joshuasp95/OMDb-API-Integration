@@ -4,7 +4,9 @@ Welcome to the OMDB API Integration Project! This endeavor serves as an illustra
 storing movie data from the illustrious OMDB (Open Movie Database) API into your local database. We invite you to join
 this coding journey and witness the conjuration of magic within your code!
 
-## Preview
+## Preview 
+
+### You can check it here http://www.joshuasainzweb.com:8090/myapp
 
 ![PROJECT IMAGE CRUD PREVIEW](https://i.imgur.com/iuGdsK6.png)
 
