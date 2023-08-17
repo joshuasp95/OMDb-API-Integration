@@ -49,6 +49,33 @@ Technologies Used
    ```sh
    ./mvnw spring-boot:run
    ```
+Also you must verify application properties match the proper configuration. 
+
+
+    Example of application.properties file
+    
+    # Port number for the server to listen on
+    server.port=port (e.g 8090)
+
+    '''
+    # Context path for the application (myapp) endpoints
+    server.servlet.context-path=/myapp
+    '''
+    #DB credentials
+    spring.datasource.username=your_username
+    spring.datasource.password=your_password
+    
+    # If you want set the active profile for the application (dev or pdn)
+    spring.profiles.active=dev
+    
+    #API KEY for omdb
+    omdb.api.key=api_key
+    omdb.api.url=http://www.omdbapi.com
+    
+    #Live reload for view changes
+    spring.devtools.restart.enabled=true
+    spring.devtools.restart.additional-paths=src/main/resources
+
 
 ## Usage
 
