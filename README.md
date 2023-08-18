@@ -27,10 +27,11 @@ Before embarking on this transformative odyssey, ensure you possess the followin
 
 Technologies Used
 
-![Java](https://img.icons8.com/color/48/000000/java-coffee-cup-logo--v1.png) Java 8+
+![Java](https://img.icons8.com/color/48/000000/java-coffee-cup-logo--v1.png) Java 18
 ![Spring Boot](https://img.icons8.com/color/48/000000/spring-logo.png) Spring Boot
 ![MySQL](https://img.icons8.com/color/48/000000/mysql-logo.png) MySQL
 ![Git](https://img.icons8.com/color/48/000000/git.png) Git
+![Thymeleaf](https://img.icons8.com/color/48/000000/thymeleaf.png)Thymeleaf
 
 ### Installation
 
