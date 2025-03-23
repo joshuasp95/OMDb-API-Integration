@@ -214,6 +214,8 @@ class MovieServiceTest {
     void searchByPersonalRating_ShouldReturnMoviesWithSpecifiedRating() {
         // Given
         int searchRating = 0;
+        // Establecer el rating en las películas de prueba
+        harryPotterMovies.forEach(movie -> movie.setPersonalRating(searchRating));
         when(movieRepository.findByPersonalRating(searchRating)).thenReturn(harryPotterMovies);
 
         // When
