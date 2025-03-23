@@ -4,6 +4,7 @@ import com.myapp.omdb.persistence.entity.Movie;
 import com.myapp.omdb.persistence.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class MovieServiceTest {
 
@@ -32,12 +31,12 @@ class MovieServiceTest {
     private List<Movie> harryPotterMovies;
 
     @BeforeEach
-    public void setUp() {
-        // mocks initialization
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         movieService = new MovieService(movieRepository, omdbService);
         harryPotterMovies = new ArrayList<>();
 
+        // Initialize test data
         harryPotterMovies.add(new Movie(
                 "tt0241527",
                 "Harry Potter and the Sorcerer's Stone",
@@ -107,31 +106,45 @@ class MovieServiceTest {
                 "2010",
                 "https://m.media-amazon.com/images/M/MV5BNDM0YzMyNGUtMTU1Yy00OTE2LWE5NzYtZDZhMTBmN2RkNjg3XkEyXkFqcGdeQXVyMzU5NjU1MDA@._V1_SX300.jpg"
         ));
-
     }
 
-
     @Test
-    public void verify_all_movies_are_stored_in_db() {
+    @DisplayName("Should successfully fetch and save movies in database")
+    void fetchAndSaveMoviesInDB_ShouldSaveAllMovies() {
+        // Given
         List<Movie> mockMovies = new ArrayList<>();
-        // Movie simulated example to store in database
         mockMovies.add(new Movie("tt1201607", "Harry Potter and the Deathly Hallows: Part 2", "2011",
                 "https://m.media-amazon.com/images/M/MV5BMGVmMWNiMDktYjQ0Mi00MWIxLTk0N2UtN2ZlYTdkN2IzNDNlXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg"));
         when(omdbService.fetchAndTransformHarryPotterMovies()).thenReturn(mockMovies);
 
-        // This will store the mock movies in db
+        // When
         movieService.fetchAndSaveMoviesInDB();
 
-        // This will verify that saveAll function was properly called and without errors
+        // Then
         verify(movieRepository).saveAll(mockMovies);
-
+        verify(omdbService).fetchAndTransformHarryPotterMovies();
     }
 
     @Test
-    public void return_all_movies_from_db_order_by_year() {
-        List<Movie> mockMovies = new ArrayList<>();
+    @DisplayName("Should handle empty movie list when saving to database")
+    void fetchAndSaveMoviesInDB_ShouldHandleEmptyList() {
+        // Given
+        List<Movie> emptyMovies = new ArrayList<>();
+        when(omdbService.fetchAndTransformHarryPotterMovies()).thenReturn(emptyMovies);
 
-        // Movies simulated example returned from database
+        // When
+        movieService.fetchAndSaveMoviesInDB();
+
+        // Then
+        verify(movieRepository).saveAll(emptyMovies);
+        assertTrue(emptyMovies.isEmpty(), "Movie list should be empty");
+    }
+
+    @Test
+    @DisplayName("Should return all movies ordered by year")
+    void getAllOrderedByYear_ShouldReturnSortedMovies() {
+        // Given
+        List<Movie> mockMovies = new ArrayList<>();
         mockMovies.add(new Movie("tt0241527", "Harry Potter and the Sorcerer's Stone", "2001",
                 "https://m.media-amazon.com/images/M/MV5BNmQ0ODBhMjUtNDRhOC00MGQzLTk5MTAtZDliODg5NmU5MjZhXkEyXkFqcGdeQXVyNDUyOTg3Njg@._V1_SX300.jpg"));
         mockMovies.add(new Movie("tt0295297", "Harry Potter and the Chamber of Secrets", "2002",
@@ -143,78 +156,122 @@ class MovieServiceTest {
 
         when(movieRepository.findAllByOrderByYearAsc()).thenReturn(mockMovies);
 
+        // When
         List<Movie> actualMovies = movieService.getAllOrderedByYear();
 
-        assertEquals(mockMovies, actualMovies);
-        assertEquals("2011", actualMovies.get(3).getYear());
-        assertEquals(mockMovies.size(), actualMovies.size());
-
+        // Then
+        assertNotNull(actualMovies, "Returned movies list should not be null");
+        assertEquals(mockMovies.size(), actualMovies.size(), "Should return correct number of movies");
+        assertEquals("2001", actualMovies.get(0).getYear(), "First movie should be from 2001");
+        assertEquals("2011", actualMovies.get(3).getYear(), "Last movie should be from 2011");
+        verify(movieRepository).findAllByOrderByYearAsc();
     }
 
     @Test
-    public void return_movies_containing_title() {
-        // All harry potter movies will go through movieRepository
-        List<Movie> mockMovies = harryPotterMovies;
-        when(movieRepository.findByTitleContainingIgnoreCase(anyString())).thenReturn(mockMovies);
+    @DisplayName("Should search movies by title")
+    void searchByTitle_ShouldReturnMatchingMovies() {
+        // Given
+        String searchTitle = "Harry Potter";
+        when(movieRepository.findByTitleContainingIgnoreCase(searchTitle)).thenReturn(harryPotterMovies);
 
-        //All movies must contain this title
-        List<Movie> result = movieService.searchByTitle("Harry Potter");
+        // When
+        List<Movie> result = movieService.searchByTitle(searchTitle);
 
-        //There are 10 movies in the database
-        assertEquals(10, result.size());
-
-        // Validate that method has been called
-        verify(movieRepository).findByTitleContainingIgnoreCase("Harry Potter");
-
-        assertEquals(mockMovies, result);
+        // Then
+        assertNotNull(result, "Result should not be null");
+        assertEquals(harryPotterMovies.size(), result.size(), "Should return all matching movies");
+        verify(movieRepository).findByTitleContainingIgnoreCase(searchTitle);
+        
+        // Verify all movies contain the search term
+        result.forEach(movie -> 
+            assertTrue(movie.getTitle().toLowerCase().contains(searchTitle.toLowerCase()),
+                "All movies should contain the search term")
+        );
     }
 
     @Test
-    public void return_movies_by_year() {
-        // First harry potter movie
-        String mockYear = "2001";
+    @DisplayName("Should search movies by year")
+    void searchByYear_ShouldReturnMoviesFromSpecifiedYear() {
+        // Given
+        String searchYear = "2001";
+        List<Movie> expectedMovies = new ArrayList<>();
+        expectedMovies.add(harryPotterMovies.get(0));
+        when(movieRepository.findByYear(searchYear)).thenReturn(expectedMovies);
 
-        // Added to the mock movies response by repository
-        List<Movie> mockMovies = new ArrayList<>();
-        mockMovies.add(harryPotterMovies.get(0));
+        // When
+        List<Movie> result = movieService.searchByYear(searchYear);
 
-        when(movieRepository.findByYear(mockYear)).thenReturn(mockMovies);
-
-        List<Movie> result = movieService.searchByYear(mockYear);
-
-        assertEquals(1, result.size());
-        assertEquals("2001", result.get(0).getYear());
-        assertEquals("Harry Potter and the Sorcerer's Stone", result.get(0).getTitle());
+        // Then
+        assertNotNull(result, "Result should not be null");
+        assertEquals(1, result.size(), "Should return exactly one movie");
+        assertEquals(searchYear, result.get(0).getYear(), "Movie should be from specified year");
+        assertEquals("Harry Potter and the Sorcerer's Stone", result.get(0).getTitle(), "Should return correct movie");
+        verify(movieRepository).findByYear(searchYear);
     }
 
     @Test
-    public void return_movies_by_personal_rating() {
+    @DisplayName("Should search movies by personal rating")
+    void searchByPersonalRating_ShouldReturnMoviesWithSpecifiedRating() {
+        // Given
+        int searchRating = 0;
+        when(movieRepository.findByPersonalRating(searchRating)).thenReturn(harryPotterMovies);
 
-        int mockPersonalRating = 0;
+        // When
+        List<Movie> result = movieService.searchByPersonalRating(searchRating);
 
-        List<Movie> mockMovies = harryPotterMovies;
-
-        when(movieRepository.findByPersonalRating(mockPersonalRating)).thenReturn(mockMovies);
-
-        List<Movie> result = movieService.searchByPersonalRating(mockPersonalRating);
-
-        // all movies should have a 0 value for personal rating
-        assertEquals(10, result.size());
-        assertEquals(mockMovies.get(1).getYear(), result.get(1).getYear());
+        // Then
+        assertNotNull(result, "Result should not be null");
+        assertEquals(harryPotterMovies.size(), result.size(), "Should return all movies with specified rating");
+        verify(movieRepository).findByPersonalRating(searchRating);
+        
+        // Verify all movies have the specified rating
+        result.forEach(movie -> 
+            assertEquals(searchRating, movie.getPersonalRating(),
+                "All movies should have the specified rating")
+        );
     }
 
     @Test
-    public void verify_update_function_from_movie_repository_has_been_called() {
+    @DisplayName("Should update personal rating for a movie")
+    void updatePersonalRating_ShouldUpdateMovieRating() {
+        // Given
+        String movieId = "tt0241527";
+        int newRating = 4;
 
-        Movie mockMovie = new Movie("tt0241527", "Harry Potter and the Sorcerer's Stone", "2001",
-                "https://m.media-amazon.com/images/M/MV5BNmQ0ODBhMjUtNDRhOC00MGQzLTk5MTAtZDliODg5NmU5MjZhXkEyXkFqcGdeQXVyNDUyOTg3Njg@._V1_SX300.jpg");
+        // When
+        movieService.updatePersonalRating(movieId, newRating);
 
-        mockMovie.setPersonalRating(4);
-
-        movieRepository.updatePersonalRating(mockMovie.getImdbId(), mockMovie.getPersonalRating());
-
-        verify(movieRepository).updatePersonalRating(mockMovie.getImdbId(), mockMovie.getPersonalRating());
-
+        // Then
+        verify(movieRepository).updatePersonalRating(movieId, newRating);
     }
 
+    @Test
+    @DisplayName("Should handle invalid movie ID when updating rating")
+    void updatePersonalRating_ShouldHandleInvalidMovieId() {
+        // Given
+        String invalidMovieId = "invalid_id";
+        int newRating = 4;
+
+        // When
+        movieService.updatePersonalRating(invalidMovieId, newRating);
+
+        // Then
+        verify(movieRepository).updatePersonalRating(invalidMovieId, newRating);
+    }
+
+    @Test
+    @DisplayName("Should handle empty search results")
+    void searchByTitle_ShouldHandleEmptyResults() {
+        // Given
+        String searchTitle = "NonexistentMovie";
+        when(movieRepository.findByTitleContainingIgnoreCase(searchTitle)).thenReturn(new ArrayList<>());
+
+        // When
+        List<Movie> result = movieService.searchByTitle(searchTitle);
+
+        // Then
+        assertNotNull(result, "Result should not be null");
+        assertTrue(result.isEmpty(), "Should return empty list for no matches");
+        verify(movieRepository).findByTitleContainingIgnoreCase(searchTitle);
+    }
 }
