@@ -1,6 +1,17 @@
 package com.myapp.omdb.persistence.repository;
 
-import com.myapp.omdb.persistence.entity.Movie;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,20 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.myapp.omdb.persistence.entity.Movie;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-@Transactional
 class MovieRepositoryTest {
 
     @Autowired
@@ -33,13 +35,16 @@ class MovieRepositoryTest {
 
     @BeforeEach
     public void setUp() throws SQLException {
-        ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("sql/test-movies.sql"));
+        try (var connection = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource("sql/test-movies.sql"));
+        }
     }
-
+    
     @AfterEach
-    public void tearDown() throws Exception {
-        try (Statement st = dataSource.getConnection().createStatement()) {
-            st.execute("DROP ALL OBJECTS DELETE FILES");
+    public void tearDown() throws SQLException {
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute("DROP ALL OBJECTS DELETE FILES");
         }
     }
 
